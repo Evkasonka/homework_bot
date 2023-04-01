@@ -32,8 +32,9 @@ handler = logging.StreamHandler()
 
 
 def check_tokens():
-    """Проверяет доступность переменных окружения"""
-    """Если отсутствует хотя бы одна переменная окружения — ошибка"""
+    """Проверяет доступность переменных окружения.
+    Если отсутствует хотя бы одна переменная окружения — ошибка.
+    """
     if (PRACTICUM_TOKEN is None
             or TELEGRAM_TOKEN is None
             or TELEGRAM_CHAT_ID is None):
@@ -44,7 +45,7 @@ def check_tokens():
 
 
 def send_message(bot, message):
-    """Отправляет сообщение в Telegram чат"""
+    """Отправляет сообщение в Telegram чат."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug(f'Сообщение отправлено: {message}')
@@ -55,7 +56,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(timestamp):
-    """Запрос к единственному эндпоинту API-сервиса"""
+    """Запрос к единственному эндпоинту API-сервиса."""
     playload = {'from_date': timestamp}
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=playload)
@@ -74,7 +75,7 @@ def get_api_answer(timestamp):
 
 
 def check_response(response):
-    """Проверяет ответ API на соответствие документации"""
+    """Проверяет ответ API на соответствие документации."""
     if not isinstance(response, dict):
         raise TypeError('ответ API не является словарем')
     if 'homeworks' not in response.keys():
@@ -88,7 +89,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Извлекает из информации о конкретной домашней работе статус"""
+    """Извлекает из информации о конкретной домашней работе статус."""
     if not isinstance(homework, dict):
         raise Exception('homework не словарь.')
     homework_name = homework.get('homework_name')
