@@ -31,20 +31,17 @@ logging.basicConfig(
 handler = logging.StreamHandler()
 
 
-def check_tokens():
+def check_tokens() -> bool:
     """Проверяет доступность переменных окружения.
     Если отсутствует хотя бы одна переменная окружения — ошибка.
     """
-    if (PRACTICUM_TOKEN is None
-            or TELEGRAM_TOKEN is None
-            or TELEGRAM_CHAT_ID is None):
+    if not all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID]):
         logging.critical('Отсутствует хотя бы одна переменная окружения')
         raise CheckTokenError('Отсутствует хотя бы одна переменная окружения')
-    else:
-        return True
+    return True
 
 
-def send_message(bot, message):
+def send_message(bot: telegram.bot.Bot, message: str) -> None:
     """Отправляет сообщение в Telegram чат."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
@@ -55,7 +52,7 @@ def send_message(bot, message):
         raise MessageSendError(f'Ошибка при отправке сообщения: {error}')
 
 
-def get_api_answer(timestamp):
+def get_api_answer(timestamp: int) -> dict:
     """Запрос к единственному эндпоинту API-сервиса."""
     playload = {'from_date': timestamp}
     try:
@@ -74,11 +71,11 @@ def get_api_answer(timestamp):
         raise Exception(f'При запросе к API произошел сбой. "{error}"')
 
 
-def check_response(response):
+def check_response(response: dict) -> list:
     """Проверяет ответ API на соответствие документации."""
     if not isinstance(response, dict):
         raise TypeError('ответ API не является словарем')
-    if 'homeworks' not in response.keys():
+    if 'homeworks' not in response:
         logging.error('Ответ API не содержит ключа "homeworks"')
         raise KeyError('Ответ API не содержит ключа "homeworks"')
     homeworks = response.get('homeworks')
@@ -88,7 +85,7 @@ def check_response(response):
     return homeworks
 
 
-def parse_status(homework):
+def parse_status(homework: dict) -> str:
     """Извлекает из информации о конкретной домашней работе статус."""
     if not isinstance(homework, dict):
         raise Exception('homework не словарь.')
@@ -102,7 +99,7 @@ def parse_status(homework):
     raise Exception(f'Неизвестный статус "{homework_status}"')
 
 
-def main():
+def main() -> None:
     """Основная логика работы бота."""
     check_tokens()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
@@ -116,8 +113,7 @@ def main():
             homeworks = check_response(response)
             for homework in homeworks:
                 message = parse_status(homework)
-                if message:
-                    send_message(bot, message)
+                send_message(bot, message)
             else:
                 logging.debug('Нет нового статусa')
         except Exception as error:
