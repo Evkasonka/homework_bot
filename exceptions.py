@@ -4,7 +4,3 @@ class MessageSendError(Exception):
 
 class CheckTokenError(Exception):
     """Отсутствует важная переменная"""
-
-
-class ResponseApiError(Exception):
-    """ошибка API-сервиса"""
