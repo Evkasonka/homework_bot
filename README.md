@@ -38,7 +38,7 @@
     python3 -m pip install --upgrade pip
     pip install -r requirements.txt
     ```
-    
+
  6. Запустить проект локально:
 
     ```python
@@ -47,5 +47,3 @@
     # для OS Windows
     python3 homework_bot.py
     ```
-
-

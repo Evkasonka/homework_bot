@@ -48,8 +48,8 @@ def send_message(bot: telegram.bot.Bot, message: str) -> None:
         logging.debug(f'Сообщение отправлено: {message}')
     except Exception as error:
         error = f'Сообщение не удалось отправить: {error}'
-        logging.error(f'Ошибка при отправке сообщения: {error}')
-        raise MessageSendError(f'Ошибка при отправке сообщения: {error}')
+        logging.error(error)
+        raise MessageSendError(error)
 
 
 def get_api_answer(timestamp: int) -> dict:
@@ -63,12 +63,14 @@ def get_api_answer(timestamp: int) -> dict:
             raise Exception(f'Эндпоинт API-сервиса не доступен: '
                             f'Код ответа: {response.status_code}')
         if response is None:
-            logging.error('нет ответа от API-сервиса')
-            raise Exception('нет ответа от API-сервиса')
+            message = ('нет ответа от API-сервиса')
+            logging.error(message)
+            raise Exception(message)
         return response.json()
     except Exception as error:
-        logging.error(f'При запросе к API произошел сбой. "{error}"')
-        raise Exception(f'При запросе к API произошел сбой. "{error}"')
+        message = (f'При запросе к API произошел сбой. "{error}"')
+        logging.error(message)
+        raise Exception(message)
 
 
 def check_response(response: dict) -> list:
@@ -76,12 +78,14 @@ def check_response(response: dict) -> list:
     if not isinstance(response, dict):
         raise TypeError('ответ API не является словарем')
     if 'homeworks' not in response:
-        logging.error('Ответ API не содержит ключа "homeworks"')
-        raise KeyError('Ответ API не содержит ключа "homeworks"')
+        message = ('Ответ API не содержит ключа "homeworks"')
+        logging.error(message)
+        raise KeyError(message)
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
-        logging.error('Ключ "homeworks" не является списком')
-        raise TypeError('Ключ "homeworks" не является списком')
+        message = ('Ключ "homeworks" не является списком')
+        logging.error(message)
+        raise TypeError(message)
     return homeworks
 
 
